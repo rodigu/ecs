@@ -3,7 +3,7 @@ import { Size, Position } from "./helpers";
 export type BehaviorFunction<T> = (e: T) => void;
 export type StateFunction<T> = (e: T) => void;
 
-export abstract class Entity {
+export class Entity {
   readonly id: string;
   private behaviors: Map<string, BehaviorFunction<Entity>>;
   private states: Map<string, StateFunction<Entity>>;
@@ -11,8 +11,8 @@ export abstract class Entity {
   private p: p5;
   size: Size;
 
-  abstract reset: () => void;
-  abstract setup: () => void;
+  reset: () => void;
+  setup: () => void;
 
   static Assets = {
     sample: "sample",

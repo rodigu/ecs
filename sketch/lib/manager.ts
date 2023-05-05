@@ -23,6 +23,7 @@ export class GameManager {
     this.preload = preloadFunction;
     this.behaviors = new Map();
     this.states = new Map();
+    this.assets = new Map();
     this.currentState = "";
     this.p = p;
   }
@@ -34,6 +35,10 @@ export class GameManager {
     if (this.existingLayers.indexOf(layer) === -1)
       this.existingLayers.push(layer);
     this.existingLayers.sort();
+  }
+
+  addAsset(name: string, path: string) {
+    this.assets.set(name, path);
   }
 
   addBehavior(name: string, behavior: BehaviorFunction<GameManager>) {
