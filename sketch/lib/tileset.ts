@@ -31,18 +31,18 @@ export class Tileset {
       this.image,
       x,
       y,
-      size.height,
       size.width,
+      size.height,
       tileX,
       tileY,
-      this.sourceSize.height,
-      this.sourceSize.width
+      this.sourceSize.width,
+      this.sourceSize.height
     );
   }
 
   tileNumToPos(n: number) {
     return {
-      tileX: (n % this.sourceColumns) * this.sourceSize.height,
+      tileX: (n % this.sourceColumns) * this.sourceSize.width,
       tileY: Math.floor(n / this.sourceColumns) * this.sourceSize.width,
     };
   }

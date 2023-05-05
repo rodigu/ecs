@@ -1,7 +1,7 @@
 import { Size, Position } from "./helpers";
 
-type BehaviorFunction<T> = (e: T) => void;
-type StateFunction<T> = (e: T) => void;
+export type BehaviorFunction<T> = (e: T) => void;
+export type StateFunction<T> = (e: T) => void;
 
 export abstract class Entity {
   readonly id: string;
