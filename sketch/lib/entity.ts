@@ -1,15 +1,41 @@
-import { Size, Position } from "./helpers";
+import { Size, Position, throwCustomError, ERRORS } from "./helpers";
 
 export type BehaviorFunction<T> = (e: T) => void;
 export type StateFunction<T> = (e: T) => void;
 
 export abstract class Entity {
+  /**
+   * ## Entity abstract class
+   *
+   * ### Behaviors
+   *
+   * All behaviors inside `Entity.activeBehaviors` are run at `Entity.run()`.
+   *
+   * ### States
+   *
+   * Only `Entity.currentState` is run at `Entity.run()`
+   *
+   * ### Internal Functions
+   *
+   * These are never called by the Entity class or its children.
+   * They are supposed to be called inside of behavior and state functions.
+   *
+   * @date 5/4/2023 - 8:38:52 PM
+   *
+   */
   readonly id: string;
+  readonly layer: number;
+  readonly p: p5;
+
+  private activeBehaviors: Set<string>;
   private behaviors: Map<string, BehaviorFunction<Entity>>;
   private states: Map<string, StateFunction<Entity>>;
   private currentState: string;
-  private p: p5;
+  private internalFunctions: Map<string, Function>;
+
+  positionVector: p5.Vector;
   size: Size;
+  rotation: number;
 
   abstract reset: () => void;
   abstract setup: () => void;
@@ -18,12 +44,54 @@ export abstract class Entity {
     sample: "sample",
   };
 
-  constructor(p: p5, id: string) {
+  constructor(
+    p: p5,
+    id: string,
+    layer: number,
+    size = { width: 0, height: 0 },
+    position = { x: 0, y: 0 },
+    rotation = 0
+  ) {
     this.p = p;
     this.id = id;
+    this.positionVector = p.createVector(position.x, position.y);
+    this.size = size;
+    this.rotation = rotation;
+    this.layer = layer;
     this.behaviors = new Map();
     this.states = new Map();
     this.currentState = "";
+    this.activeBehaviors = new Set();
+    this.internalFunctions = new Map();
+  }
+
+  get position(): Position {
+    return { x: this.positionVector.x, y: this.positionVector.y };
+  }
+
+  getFunction(name: string) {
+    return this.internalFunctions.get(name);
+  }
+
+  addInternalFunction<T>(name: string, func: (param: T) => void) {
+    this.internalFunctions.set(name, func);
+  }
+
+  removeInternalFunction(name: string) {
+    this.internalFunctions.delete(name);
+  }
+
+  activateBehavior(name: string) {
+    if (!this.behaviors.has(name))
+      throwCustomError(
+        ERRORS.Entity.NO_BEHAVIOR,
+        `Behavior [${name}] is not in entity [${this.id}]`
+      );
+    this.activeBehaviors.add(name);
+  }
+
+  deactivateBehavior(name: string) {
+    this.activeBehaviors.delete(name);
   }
 
   addBehavior(name: string, behavior: BehaviorFunction<Entity>) {
@@ -55,7 +123,8 @@ export abstract class Entity {
   }
 
   run() {
-    for (const behavior of this.behaviors.values()) behavior(this);
+    for (const behavior of this.activeBehaviors)
+      this.behaviors.get(behavior)(this);
     this.states.get(this.currentState)(this);
   }
 

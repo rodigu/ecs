@@ -36,6 +36,19 @@ export class GameManager {
     this.existingLayers.sort();
   }
 
+  removeEntity(entity: Entity) {
+    this.entities.delete(entity.id);
+    this.layers.get(entity.layer)!.delete(entity.id);
+  }
+
+  getEntity(name: string) {
+    return this.entities.get(name);
+  }
+
+  getLayer(layer: number) {
+    return this.layers.get(layer);
+  }
+
   addBehavior(name: string, behavior: BehaviorFunction<GameManager>) {
     this.behaviors.set(name, behavior);
   }
@@ -88,6 +101,4 @@ export class GameManager {
   getAsset(assetName: string) {
     return this.assets.get(assetName);
   }
-
-  static addSimpleLoadingScreen(manager: GameManager) {}
 }

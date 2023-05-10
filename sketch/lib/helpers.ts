@@ -27,3 +27,9 @@ export class Helpers {
 
   randElement<T>(list: Array<T>): T {}
 }
+
+export class ERRORS {
+  static Entity = {
+    NO_BEHAVIOR: new Error("Entity has no behavior of given name."),
+  };
+}

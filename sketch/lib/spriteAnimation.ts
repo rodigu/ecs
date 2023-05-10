@@ -1,18 +1,24 @@
 import { throwCustomError, Size, Position, ColorInterface } from "./helpers";
 import { Tileset } from "./tileset";
 
-type AnimationCycleName = string;
+export type AnimationCycleName = string;
 
-type SpriteIndex = number;
-interface SpriteAnimationCycle {
+export type SpriteIndex = number;
+export interface SpriteAnimationCycle {
   cycle: SpriteIndex[];
   timeBetweenFrames: number;
 }
 
-interface SpriteAnimationIdentifier {
+export interface SpriteAnimationIdentifier {
   name: string;
   idx: SpriteIndex;
   timeSinceFrame: number;
+}
+
+export interface NewCycleInformation {
+  cycleName: AnimationCycleName;
+  frames: SpriteIndex[];
+  timing: number;
 }
 
 export class SpriteAnimation {
@@ -29,11 +35,8 @@ export class SpriteAnimation {
     this.animationCycles = new Map();
   }
 
-  addCycle(
-    cycleName: AnimationCycleName,
-    frames: SpriteIndex[],
-    timing: number
-  ) {
+  addCycle(cycle: NewCycleInformation) {
+    const { cycleName, frames, timing } = cycle;
     this.animationCycles.set(cycleName, {
       cycle: frames,
       timeBetweenFrames: timing,
@@ -48,13 +51,7 @@ export class SpriteAnimation {
     };
   }
 
-  draw(
-    p: p5,
-    position: Position,
-    rotation: number,
-    color: ColorInterface,
-    size: Size
-  ) {
+  draw(p: p5, position: Position, rotation: number, size: Size, opacity = 255) {
     const animationFrames = this.animationCycles.get(this.current.name)?.cycle;
 
     if (animationFrames === undefined) {
@@ -77,7 +74,7 @@ export class SpriteAnimation {
     }
 
     p.push();
-    p.tint(255, color.alpha);
+    p.tint(255, opacity);
     p.translate(position.x, position.y);
     p.rotate(rotation);
     this.tileset.drawTile(p, currentSprite, { x: 0, y: 0 }, size);
