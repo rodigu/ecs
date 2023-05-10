@@ -21,11 +21,17 @@ export interface ColorInterface {
 }
 
 export class Helpers {
-  rand() {}
+  static random(min: number, max: number) {
+    return Math.random() * (max - min) + min;
+  }
 
-  randint() {}
+  static randint(min: number, max: number) {
+    return Math.floor(Helpers.random(min, max));
+  }
 
-  randElement<T>(list: Array<T>): T {}
+  randElement<T>(list: Array<T>): T {
+    return list[Helpers.randint(0, list.length)];
+  }
 }
 
 export class ERRORS {

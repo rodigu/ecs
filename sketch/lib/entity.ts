@@ -37,8 +37,8 @@ export abstract class Entity {
   size: Size;
   rotation: number;
 
-  abstract reset: () => void;
-  abstract setup: () => void;
+  reset: () => void;
+  setup: () => void;
 
   static Assets = {
     sample: "sample",
