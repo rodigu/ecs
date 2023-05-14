@@ -3,7 +3,7 @@ import { Size, Position, throwCustomError, ERRORS } from "./helpers";
 export type BehaviorFunction<T> = (e: T) => void;
 export type StateFunction<T> = (e: T) => void;
 
-export abstract class Entity {
+export class Entity {
   /**
    * ## Entity abstract class
    *
