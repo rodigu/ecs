@@ -6,6 +6,7 @@ type Layer = Map<string, Entity>;
 export class GameManager {
   private loadedAssetsCount: number;
   private currentState: string;
+  private events: Map<string, any>;
 
   readonly assets: Map<string, p5.Image | string>;
 
@@ -26,6 +27,14 @@ export class GameManager {
     this.assets = new Map();
     this.currentState = "";
     this.p = p;
+  }
+
+  addEvent(name: string, options: any) {
+    this.events.set(name, options);
+  }
+
+  removeEvent(name: string) {
+    this.events.delete(name);
   }
 
   addEntity(name: string, entity: Entity, layer: number) {
