@@ -24,6 +24,7 @@ export class BaseBehaviors {
    * @static
    * @param {Entity} entity
    * @param {Tileset} tileset
+   * @return {{ newCycleFunction, setCurrentSpriteFunction }} sprite animation functions
    */
   static addSpriteAnimation(entity: Entity, tileset: Tileset) {
     const spriteAnimation = new SpriteAnimation(tileset);
@@ -32,18 +33,24 @@ export class BaseBehaviors {
     };
     entity.addBehavior(BaseBehaviors.Names.SpriteAnimation, behavior);
 
+    const newCycleFunction = (newCycle: NewCycleInformation) => {
+      spriteAnimation.addCycle(newCycle);
+    };
+
     entity.addInternalFunction<NewCycleInformation>(
       BaseBehaviors.Names.AddSpriteCycle,
-      (newCycle) => {
-        spriteAnimation.addCycle(newCycle);
-      }
+      newCycleFunction
     );
+
+    const setCurrentSpriteFunction = (name: string) => {
+      spriteAnimation.setCurrentAnimation(name);
+    };
 
     entity.addInternalFunction<string>(
       BaseBehaviors.Names.SetCurrentSpriteCycle,
-      (name) => {
-        spriteAnimation.setCurrentAnimation(name);
-      }
+      setCurrentSpriteFunction
     );
+
+    return { newCycleFunction, setCurrentSpriteFunction };
   }
 }
