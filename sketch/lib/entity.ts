@@ -123,12 +123,12 @@ export class Entity {
   }
 
   run() {
+    this.p.push();
+    this.p.translate(this.position.x, this.position.y);
+    this.p.rotate(this.rotation);
     for (const behavior of this.activeBehaviors)
       this.behaviors.get(behavior)(this);
     this.states.get(this.currentState)(this);
+    this.p.pop();
   }
-
-  static generateDrawEntityFunction(entity: Entity) {}
-
-  static addSpriteAnimationState(entity: Entity) {}
 }
