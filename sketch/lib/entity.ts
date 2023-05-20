@@ -27,6 +27,8 @@ export class Entity {
   readonly layer: number;
   readonly p: p5;
 
+  readonly tags: string[];
+
   private activeBehaviors: Set<string>;
   private behaviors: Map<string, BehaviorFunction<Entity>>;
   private states: Map<string, StateFunction<Entity>>;
@@ -50,7 +52,8 @@ export class Entity {
     layer: number,
     size = { width: 0, height: 0 },
     position = { x: 0, y: 0 },
-    rotation = 0
+    rotation = 0,
+    tags: string[] = []
   ) {
     this.p = p;
     this.id = id;
@@ -63,6 +66,7 @@ export class Entity {
     this.currentState = "";
     this.activeBehaviors = new Set();
     this.internalFunctions = new Map();
+    this.tags = tags;
   }
 
   get position(): Position {

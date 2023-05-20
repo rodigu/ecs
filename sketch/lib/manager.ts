@@ -1,5 +1,6 @@
 import * as p5 from "p5";
 import { BehaviorFunction, Entity, StateFunction } from "./entity";
+import { gameConfig } from "../game/config";
 
 type Layer = Map<string, Entity>;
 
@@ -8,20 +9,21 @@ export class GameManager {
   private currentState: string;
   private events: Map<string, any>;
 
-  readonly assets: Map<string, p5.Image | string>;
+  readonly assets: Map<string, p5.Image | string | p5.SoundFile>;
+  readonly configs = gameConfig;
 
   readonly layers: Map<number, Layer>;
   readonly existingLayers: number[];
   readonly entities: Map<string, Entity>;
 
+  readonly entityGroups: Map<string, Entity>;
+
   readonly behaviors: Map<string, BehaviorFunction<GameManager>>;
   readonly states: Map<string, StateFunction<GameManager>>;
 
   readonly p: p5;
-  readonly preload: (p: p5) => void;
 
-  constructor(p: p5, preloadFunction: (p: p5) => void) {
-    this.preload = preloadFunction;
+  constructor(p: p5) {
     this.behaviors = new Map();
     this.states = new Map();
     this.assets = new Map();
@@ -37,18 +39,22 @@ export class GameManager {
     this.events.delete(name);
   }
 
-  addEntity(name: string, entity: Entity, layer: number) {
-    this.entities.set(name, entity);
+  addEntity(entity: Entity, layer: number) {
+    this.entities.set(entity.id, entity);
     if (!this.layers.has(layer)) this.layers.set(layer, new Map());
-    this.layers.get(layer)!.set(name, entity);
+    this.layers.get(layer)!.set(entity.id, entity);
     if (this.existingLayers.indexOf(layer) === -1)
       this.existingLayers.push(layer);
     this.existingLayers.sort();
+
+    for (const tag of entity.tags) this.entityGroups.set(tag, entity);
   }
 
   removeEntity(entity: Entity) {
     this.entities.delete(entity.id);
     this.layers.get(entity.layer)!.delete(entity.id);
+
+    for (const tag of entity.tags) this.entityGroups.delete(tag);
   }
 
   getEntity(name: string) {
@@ -61,6 +67,10 @@ export class GameManager {
 
   addAsset(name: string, path: string) {
     this.assets.set(name, path);
+  }
+
+  insertAsset(name: string, file: p5.Image | p5.SoundFile) {
+    this.assets.set(name, file);
   }
 
   addBehavior(name: string, behavior: BehaviorFunction<GameManager>) {

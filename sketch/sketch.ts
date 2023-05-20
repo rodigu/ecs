@@ -1,16 +1,25 @@
+import * as p5 from "p5";
+import { GameManager } from "./lib/manager";
+import { preloadFunction } from "./game/peloadFunction";
+import { setupFunction } from "./game/setupFunction";
+
+let gameManager: GameManager;
+
 var sketch = (p: p5) => {
   const x = 100;
   const y = 100;
-  p.preload = () => {};
+  gameManager = new GameManager(p);
+
+  p.preload = () => {
+    preloadFunction(gameManager);
+  };
 
   p.setup = () => {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    setupFunction(gameManager);
   };
 
   p.draw = () => {
-    p.background(0);
-    p.fill(255);
-    p.rect(x, y, 50, 50);
+    gameManager.run();
   };
 };
 
